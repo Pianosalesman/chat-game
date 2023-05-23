@@ -4,7 +4,7 @@ import uuid
 
 
 class TrafficMixin:  # Миксин движущихся объектов
-    def display_info(self, number_metres):
+    def move(self, number_metres):
         self.number_metres = number_metres
         self.id = uuid.uuid4()
         print(f"Объект {self.id} переместился на {self.number_metres} метров")
@@ -43,10 +43,9 @@ class MilitaryAuto(enum.Enum):  # Класс для военной машины
     GRENADE_LAUNCHER = 10
 
     def shooting(self):  # Метод для стрельбы
-        peaceful_car1.make_damage(self.HEAVY_MACHINE_GUN.value)  # Передача урона в зависимости от типа оружия
-        peaceful_car2.make_damage(self.HEAVY_MACHINE_GUN.value)
+        car.make_damage(self.HEAVY_MACHINE_GUN.value)  # Передача урона в зависимости от типа оружия
         print(f"Произошла стрельба из {self.HEAVY_MACHINE_GUN.name}"
-              f" по {peaceful_car1.name}, {peaceful_car2.name}")
+              f" по {car.name}")
 
 
 class PeacefulAuto(BasicAuto):  # Класс для мирного авто
@@ -62,12 +61,13 @@ class PeacefulAuto(BasicAuto):  # Класс для мирного авто
 
 
 if __name__ == '__main__':
+    car = BasicAuto(name=str)
     peaceful_car1 = PeacefulAuto(4, 'Ford', life=10)
-    peaceful_car1.display_info(6)
+    peaceful_car1.move(6)
     peaceful_car2 = PeacefulAuto(3, 'Lada', life=10)
-    peaceful_car2.display_info(15)
+    peaceful_car2.move(15)
     peaceful_car3 = PeacefulAuto(5, 'Opel', life=10)
-    peaceful_car3.display_info(25)
+    peaceful_car3.move(25)
     peaceful_car3.make_damage(10)
 
     Hummer = MilitaryAuto.HEAVY_MACHINE_GUN
