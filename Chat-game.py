@@ -20,12 +20,16 @@ class MovingSmoke(TrafficMixin):  # Движущийся дым
 
 
 class BasicAuto(TrafficMixin):  # Класс движущегося авто
-    def __init__(self, name, life=10):
+
+    cars_list = []
+
+    def __init__(self, name=None, life=10):
         self.name = name
         self.life = life
+        BasicAuto.cars_list.append(self)
 
     def make_damage(self, damage):  # Метод причинения ущерба
-        self.life -= damage
+        self.life = self.life - damage
         return self.life
 
     def __del__(self):  # Деструктор, вызывающий взрыв
@@ -42,10 +46,14 @@ class MilitaryAuto(enum.Enum):  # Класс для военной машины
     HEAVY_MACHINE_GUN = 5
     GRENADE_LAUNCHER = 10
 
+# weapon = {weapon.name: weapon.value for weapon in MilitaryAuto}
+
     def shooting(self):  # Метод для стрельбы
-        car.make_damage(self.HEAVY_MACHINE_GUN.value)  # Передача урона в зависимости от типа оружия
-        print(f"Произошла стрельба из {self.HEAVY_MACHINE_GUN.name}"
-              f" по {car.name}")
+        [car.make_damage(self.HEAVY_MACHINE_GUN.value) for car in BasicAuto.cars_list]
+        car_names = [car.name for car in BasicAuto.cars_list]
+
+        print(f"Произошла стрельба из {self.name}"
+              f" по {car_names}")
 
 
 class PeacefulAuto(BasicAuto):  # Класс для мирного авто
@@ -61,7 +69,6 @@ class PeacefulAuto(BasicAuto):  # Класс для мирного авто
 
 
 if __name__ == '__main__':
-    car = BasicAuto(name=str)
     peaceful_car1 = PeacefulAuto(4, 'Ford', life=10)
     peaceful_car1.move(6)
     peaceful_car2 = PeacefulAuto(3, 'Lada', life=10)
