@@ -21,16 +21,9 @@ class MovingSmoke(TrafficMixin):  # Движущийся дым
 
 class BasicAuto(TrafficMixin):  # Класс движущегося авто
 
-    cars_list = []  # Список автомобилей
-
-    def __init__(self, name=None, life=10):
+    def __init__(self, name, life=10):
         self.name = name
         self.life = life
-        BasicAuto.cars_list.append(self)  # Добавляем машину в список
-
-    def make_damage(self, damage):  # Метод причинения ущерба
-        self.life = self.life - damage
-        return self.life
 
     def __del__(self):  # Деструктор, вызывающий взрыв
         if self.life <= 0:
@@ -41,18 +34,14 @@ class BasicAuto(TrafficMixin):  # Класс движущегося авто
         print(f"Машина {self.name} взорвалась. Дымом покрылась площадь {smoke.square_smoke}")
 
 
-class MilitaryAuto(enum.Enum):  # Класс для военной машины
-    MACHINE_GUN = 2
-    HEAVY_MACHINE_GUN = 5
-    GRENADE_LAUNCHER = 10
+class MilitaryAuto(BasicAuto):  # Класс для военной машины
+    Weapon = enum.Enum('Weapon', [('MACHINE_GUN', 2), ('HEAVY_MACHINE_GUN', 5), ('GRENADE_LAUNCHER', 10)])
+    Machine_gun = Weapon['MACHINE_GUN']
 
-    def shooting(self):  # Метод для стрельбы
-        [car.make_damage(self.HEAVY_MACHINE_GUN.value) for car in BasicAuto.cars_list]  # Урон для каждой машины в
-        # списке
-        car_names = [car.name for car in BasicAuto.cars_list]  # Выводим имя всех автомобилей из списка
-
-        print(f"Произошла стрельба из {self.name}"
-              f" по {car_names}")
+    def shooting(self, target: 'BasicAuto'):  # Метод для стрельбы
+        target.life -= self.Machine_gun.value
+        print(f"Произошла стрельба из {self.Machine_gun}"
+              f" по {target.name}")
 
 
 class PeacefulAuto(BasicAuto):  # Класс для мирного авто
@@ -74,7 +63,8 @@ if __name__ == '__main__':
     peaceful_car2.move(15)
     peaceful_car3 = PeacefulAuto(5, 'Opel', life=10)
     peaceful_car3.move(25)
-    peaceful_car3.make_damage(10)
+    peaceful_car3.__setattr__('life', 0)
 
-    Hummer = MilitaryAuto.HEAVY_MACHINE_GUN
-    Hummer.shooting()
+    Hummer = MilitaryAuto('Hummer')
+    Hummer.shooting(peaceful_car1)
+    Hummer.shooting(peaceful_car2)
